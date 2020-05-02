@@ -15,9 +15,6 @@ app.use(cors());
 
 const validTypes = [`Bug`, `Dark`, `Dragon`, `Electric`, `Fairy`, `Fighting`, `Fire`, `Flying`, `Ghost`, `Grass`, `Ground`, `Ice`, `Normal`, `Poison`, `Psychic`, `Rock`, `Steel`, `Water`]
 
-app.get('/types', handleGetTypes);
-
-app.get('/pokemon', handleGetPokemon);
 
 app.use(function validateBearerToken(req, res, next) {
     const apiToken = process.env.API_TOKEN;
@@ -36,21 +33,21 @@ function handleGetTypes(req, res) {
 
 function handleGetPokemon(req,res) {
     let response = POKEDEX.pokemon;
-
+    
     if (req.query.name) {
         response = response.filter(pokemon => pokemon.name.toLowerCase().includes(req.query.name.toLowerCase()));
     }
-
+    
     if (req.query.type) {
         response = response.filter(pokemon => pokemon.type.includes(req.query.type))
     }
-
+    
     res.json(response);
 }
 
 app.use((error, req, res, next) => {
     let response;
-
+    
     if (process.env.NODE_ENV === 'production') {
         response = {error: {message: 'server error'}}
     }
@@ -59,6 +56,10 @@ app.use((error, req, res, next) => {
     }
     res.status(500).json(response);
 });
+
+app.get('/types', handleGetTypes);
+
+app.get('/pokemon', handleGetPokemon);
 
 const PORT = process.env.PORT || 8000;
 
